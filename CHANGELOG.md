@@ -1,5 +1,11 @@
 # opencode-provider-poolside
 
+## 0.2.1
+
+### Patch Changes
+
+- a026e80: Fix the default plugin entry point, OpenCode API-key login, model aliases, and Poolside reasoning request options. Package metadata and release checks now keep published artifacts consistent.
+
 ## 0.2.0
 
 ### Minor Changes
