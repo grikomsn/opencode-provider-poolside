@@ -1,0 +1,68 @@
+{
+  "$schema": "https://json.schemastore.org/package.json",
+  "name": "opencode-provider-poolside",
+  "version": "0.1.0",
+  "description": "OpenCode plugin for the Poolside AI model provider with live model discovery",
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "opencode",
+    "opencode-provider",
+    "opencode-plugin",
+    "poolside",
+    "laguna",
+    "ai",
+    "llm",
+    "api-key"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/grikomsn/opencode-provider-poolside.git"
+  },
+  "bugs": {
+    "url": "https://github.com/grikomsn/opencode-provider-poolside/issues"
+  },
+  "homepage": "https://github.com/grikomsn/opencode-provider-poolside#readme",
+  "engines": {
+    "node": ">=22.0.0"
+  },
+  "files": [
+    "plugin.ts",
+    "index.ts",
+    "src/",
+    "opencode.json",
+    "README.md",
+    "LICENSE"
+  ],
+  "exports": {
+    ".": {
+      "import": "./index.ts"
+    },
+    "./server": {
+      "import": "./plugin.ts"
+    }
+  },
+  "main": "./index.ts",
+  "scripts": {
+    "test": "node --experimental-strip-types --test test/*.test.ts",
+    "typecheck": "tsc --noEmit",
+    "check": "npm run typecheck && npm test",
+    "package": "npm pack --dry-run",
+    "changeset": "changeset",
+    "version": "changeset version"
+  },
+  "peerDependencies": {
+    "@ai-sdk/openai-compatible": ">=1.0.0"
+  },
+  "peerDependenciesMeta": {
+    "@ai-sdk/openai-compatible": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@ai-sdk/openai-compatible": "^1.0.0",
+    "@opencode-ai/plugin": "^1.18.4",
+    "@types/node": "^24.0.0",
+    "typescript": "^5.9.3"
+  }
+}
