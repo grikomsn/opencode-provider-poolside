@@ -15,6 +15,7 @@ export type PoolsideApiModel = {
     image?: unknown;
     request?: unknown;
     input_cache_read?: unknown;
+    input_cache_write?: unknown;
   };
   supported_features?: unknown;
   supported_sampling_parameters?: unknown;
@@ -50,7 +51,7 @@ export type OpenCodeModelConfig = {
     context: number;
     output: number;
   };
-  variants?: Record<string, { reasoningEffort: string }>;
+  variants?: Record<string, Record<string, unknown>>;
   modalities?: {
     input: string[];
     output: string[];

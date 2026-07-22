@@ -30,27 +30,31 @@
     "plugin.ts",
     "index.ts",
     "src/",
-    "assets/",
+    "assets/cover.jpg",
     "opencode.json",
+    "CHANGELOG.md",
     "README.md",
     "LICENSE"
   ],
   "exports": {
     ".": {
-      "import": "./index.ts"
+      "import": "./plugin.ts"
     },
     "./server": {
       "import": "./plugin.ts"
+    },
+    "./library": {
+      "import": "./index.ts"
     }
   },
-  "main": "./index.ts",
+  "main": "./plugin.ts",
   "scripts": {
     "test": "node --experimental-strip-types --test test/*.test.ts",
     "typecheck": "tsc --noEmit",
     "check": "npm run typecheck && npm test",
     "package": "npm pack --dry-run",
     "changeset": "changeset",
-    "version": "changeset version"
+    "version": "changeset version && npm install --package-lock-only --ignore-scripts"
   },
   "peerDependencies": {
     "@ai-sdk/openai-compatible": ">=1.0.0"

@@ -25,25 +25,16 @@
 
 ### 1. Install the plugin
 
-```bash
-npm install -g opencode-provider-poolside
-```
-
-Or add it directly to your OpenCode config:
+Add the package to your OpenCode config. OpenCode installs it automatically:
 
 ```jsonc
 // ~/.config/opencode/opencode.json  or  .opencode/opencode.json
 {
-  "plugin": ["opencode-provider-poolside/server"],
-  "provider": {
-    "poolside": {
-      "npm": "@ai-sdk/openai-compatible",
-      "name": "Poolside",
-      "env": ["POOLSIDE_API_KEY"]
-    }
-  }
+  "plugin": ["opencode-provider-poolside"]
 }
 ```
+
+The legacy `opencode-provider-poolside/server` entry point remains supported.
 
 ### 2. Get a Poolside API key
 
@@ -135,7 +126,8 @@ export POOLSIDE_API_KEY="your-api-key"
 
 1. **Config hook** — On startup, the plugin registers the `poolside` provider with `@ai-sdk/openai-compatible`, sets the base URL and environment variable, and populates the model catalog.
 2. **Model discovery** — If `POOLSIDE_API_KEY` is available, the plugin fetches the live model list from `https://inference.poolside.ai/v1/models`. If the API is unreachable, it falls back to a static catalog of known Laguna models.
-3. **Auth hook** — The plugin provides an API key auth method so you can manage your key with OpenCode's `/connect poolside` command.
+3. **Model aliases** — OpenCode exposes models as `poolside/laguna-*` while sending Poolside's required `poolside/laguna-*` upstream IDs without duplicating the provider prefix.
+4. **Auth hook** — The plugin provides an API key auth method so you can manage your key with OpenCode's `/connect poolside` command.
 
 ## Related projects
 

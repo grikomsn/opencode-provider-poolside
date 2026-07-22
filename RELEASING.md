@@ -2,11 +2,9 @@
 
 Releases are managed by Changesets and `.github/workflows/release.yml`.
 
-## One-time npm setup
+## npm trusted publishing
 
-If `opencode-provider-poolside` does not exist on npm yet, an owner must bootstrap `0.1.0` once from a trusted local checkout with `npm publish --access public`. A trusted publisher is configured from an existing package's npm settings.
-
-Then configure the package's npm trusted publisher with:
+The package has already been bootstrapped on npm. Its trusted publisher must remain configured with:
 
 - Organization or user: `grikomsn`
 - Repository: `opencode-provider-poolside`
@@ -24,4 +22,4 @@ No long-lived `NPM_TOKEN` is used by GitHub Actions. The release job runs on a G
 4. The release workflow validates the package and runs `npm publish --access public --provenance` through npm trusted publishing.
 5. The workflow creates the matching `v<version>` GitHub release.
 
-After the bootstrap publish and trusted-publisher setup, run the release workflow once to create the matching `v0.1.0` GitHub release. Subsequent releases should go through the Changesets version pull request.
+If npm publication succeeds but the workflow fails before creating the GitHub release, rerun the release workflow. Its version checks skip the existing npm version and create the missing `v<version>` release without republishing.

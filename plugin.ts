@@ -1,4 +1,4 @@
-import type { PluginInput } from "@opencode-ai/plugin";
+import type { Hooks, PluginInput } from "@opencode-ai/plugin";
 import {
   FALLBACK_MODELS,
   POOLSIDE_API_KEY_ENV,
@@ -26,7 +26,7 @@ import type { OpenCodeProviderConfig } from "./src/types.ts";
  * Usage in `opencode.json`:
  * ```json
  * {
- *   "plugin": ["opencode-provider-poolside/server"],
+ *   "plugin": ["opencode-provider-poolside"],
  *   "provider": {
  *     "poolside": {
  *       "npm": "@ai-sdk/openai-compatible",
@@ -39,7 +39,7 @@ import type { OpenCodeProviderConfig } from "./src/types.ts";
  */
 export default async function poolsidePlugin(
   _input: PluginInput
-) {
+): Promise<Hooks> {
   return {
     /**
      * Config hook: registers the Poolside provider and discovers models.
@@ -48,8 +48,11 @@ export default async function poolsidePlugin(
      * The hook mutates the config in place to add or update the `poolside`
      * provider entry.
      */
-    config: async (config: Record<string, unknown>): Promise<void> => {
-      const providerConfig = ensureProviderConfig(config, PROVIDER_ID);
+    config: async (config): Promise<void> => {
+      const providerConfig = ensureProviderConfig(
+        config as Record<string, unknown>,
+        PROVIDER_ID
+      );
 
       // Set provider metadata if not already configured.
       if (!providerConfig.npm) {
@@ -111,20 +114,9 @@ export default async function poolsidePlugin(
         {
           type: "api" as const,
           label: "API Key",
-          authorize: async (
-            inputs: Record<string, unknown> | undefined
-          ): Promise<{ type: "success"; key: string } | { type: "failed" }> => {
-            const rawKey = inputs?.key;
-            if (typeof rawKey !== "string") return { type: "failed" };
-            const key = rawKey.trim();
-            if (!key) return { type: "failed" };
-            return { type: "success", key };
-          },
         },
       ],
-      loader: async (
-        getAuth: () => Promise<{ type: string; key?: string } | null>
-      ): Promise<Record<string, unknown>> => {
+      loader: async (getAuth): Promise<Record<string, unknown>> => {
         try {
           const auth = await getAuth();
           if (!auth) return {};
