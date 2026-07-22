@@ -110,6 +110,7 @@ describe("parseModelsResponse", () => {
             prompt: "0.14",
             completion: "0.28",
             input_cache_read: "0.01",
+            input_cache_write: "0.02",
           },
         },
       ],
@@ -118,6 +119,7 @@ describe("parseModelsResponse", () => {
     assert.equal(result[0]!.cost.input, 0.14);
     assert.equal(result[0]!.cost.output, 0.28);
     assert.equal(result[0]!.cost.cache_read, 0.01);
+    assert.equal(result[0]!.cost.cache_write, 0.02);
   });
 
   test("sets reasoning to false when not in supported_features", () => {
@@ -193,15 +195,24 @@ describe("parseModelsResponse", () => {
 });
 
 describe("modelsToConfigMap", () => {
-  test("converts model array to id-keyed map", () => {
+  test("uses unprefixed OpenCode keys while preserving upstream IDs", () => {
     const models = [
       { id: "poolside/laguna-m.1", name: "Laguna M.1" },
       { id: "poolside/laguna-xs-2.1", name: "Laguna XS 2.1" },
     ];
     const map = modelsToConfigMap(models as never);
     assert.equal(Object.keys(map).length, 2);
-    assert.equal(map["poolside/laguna-m.1"].name, "Laguna M.1");
-    assert.equal(map["poolside/laguna-xs-2.1"].name, "Laguna XS 2.1");
+    assert.equal(map["laguna-m.1"].name, "Laguna M.1");
+    assert.equal(map["laguna-m.1"].id, "poolside/laguna-m.1");
+    assert.equal(map["laguna-xs-2.1"].name, "Laguna XS 2.1");
+    assert.ok(!map["poolside/laguna-m.1"]);
+  });
+
+  test("preserves IDs that do not use the provider prefix", () => {
+    const map = modelsToConfigMap([
+      { id: "custom-model", name: "Custom" },
+    ] as never);
+    assert.equal(map["custom-model"].id, "custom-model");
   });
 
   test("returns empty object for empty array", () => {

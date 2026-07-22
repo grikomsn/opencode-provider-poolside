@@ -9,7 +9,7 @@ type PluginResult = {
     methods: Array<{
       type: string;
       label: string;
-      authorize: (
+      authorize?: (
         inputs: Record<string, unknown> | undefined
       ) => Promise<{ type: string; key?: string }>;
     }>;
@@ -83,40 +83,11 @@ describe("Poolside OpenCode Plugin", () => {
     assert.equal(plugin.auth.provider, "poolside");
   });
 
-  test("authorize returns success with valid key", async () => {
+  test("uses OpenCode's built-in API key prompt and storage", async () => {
     const plugin = await pluginFn();
-    const result = await plugin.auth.methods[0].authorize({ key: "sk-valid-key" });
-    assert.equal(result.type, "success");
-    assert.equal(
-      (result as { type: string; key: string }).key,
-      "sk-valid-key"
-    );
-  });
-
-  test("authorize returns failed with empty key", async () => {
-    const plugin = await pluginFn();
-    const result = await plugin.auth.methods[0].authorize({ key: "   " });
-    assert.equal(result.type, "failed");
-  });
-
-  test("authorize returns failed with undefined key", async () => {
-    const plugin = await pluginFn();
-    const result = await plugin.auth.methods[0].authorize({ key: undefined });
-    assert.equal(result.type, "failed");
-  });
-
-  test("authorize returns failed with missing inputs", async () => {
-    const plugin = await pluginFn();
-    const result = await plugin.auth.methods[0].authorize(undefined);
-    assert.equal(result.type, "failed");
-  });
-
-  test("authorize returns failed with non-string key", async () => {
-    const plugin = await pluginFn();
-    const result = await plugin.auth.methods[0].authorize({
-      key: 123 as unknown as string,
-    });
-    assert.equal(result.type, "failed");
+    assert.equal(plugin.auth.methods[0].type, "api");
+    assert.equal(plugin.auth.methods[0].label, "API Key");
+    assert.equal(plugin.auth.methods[0].authorize, undefined);
   });
 
   test("loader returns apiKey on successful auth", async () => {
@@ -195,9 +166,9 @@ describe("Poolside OpenCode Plugin", () => {
     const models = poolside.models as Record<string, unknown>;
     assert.ok(models);
     assert.ok(Object.keys(models).length > 0);
-    assert.ok(models["poolside/laguna-m.1"]);
-    assert.ok(models["poolside/laguna-xs-2.1"]);
-    assert.ok(models["poolside/laguna-s-2.1"]);
+    assert.ok(models["laguna-m.1"]);
+    assert.ok(models["laguna-xs-2.1"]);
+    assert.ok(models["laguna-s-2.1"]);
   });
 
   test("config hook does not overwrite existing npm field", async () => {
@@ -227,7 +198,7 @@ describe("Poolside OpenCode Plugin", () => {
     ).poolside;
     const models = poolside.models as Record<string, unknown>;
     assert.ok(models["my-model"]);
-    assert.ok(models["poolside/laguna-m.1"]);
+    assert.ok(models["laguna-m.1"]);
   });
 
   test("config hook creates provider block if missing", async () => {
@@ -293,8 +264,8 @@ describe("Poolside OpenCode Plugin", () => {
         config.provider as Record<string, Record<string, unknown>>
       ).poolside;
       const models = poolside.models as Record<string, unknown>;
-      assert.ok(models["poolside/laguna-m.1"]);
-      assert.ok(models["poolside/laguna-xs-2.1"]);
+      assert.ok(models["laguna-m.1"]);
+      assert.ok(models["laguna-xs-2.1"]);
     } finally {
       if (originalEnv !== undefined) {
         process.env.POOLSIDE_API_KEY = originalEnv;
@@ -321,7 +292,7 @@ describe("Poolside OpenCode Plugin", () => {
         config.provider as Record<string, Record<string, unknown>>
       ).poolside;
       const models = poolside.models as Record<string, unknown>;
-      assert.ok(models["poolside/laguna-m.1"]);
+      assert.ok(models["laguna-m.1"]);
     } finally {
       if (originalEnv !== undefined) {
         process.env.POOLSIDE_API_KEY = originalEnv;
@@ -350,7 +321,7 @@ describe("Poolside OpenCode Plugin", () => {
         config.provider as Record<string, Record<string, unknown>>
       ).poolside;
       const models = poolside.models as Record<string, unknown>;
-      assert.ok(models["poolside/laguna-m.1"]);
+      assert.ok(models["laguna-m.1"]);
     } finally {
       if (originalEnv !== undefined) {
         process.env.POOLSIDE_API_KEY = originalEnv;
@@ -399,9 +370,9 @@ describe("Poolside OpenCode Plugin", () => {
       ).poolside;
       const models = poolside.models as Record<string, unknown>;
       assert.ok(models["my-custom-model"]);
-      assert.ok(models["poolside/laguna-m.1"]);
+      assert.ok(models["laguna-m.1"]);
       // Discovered model should have full metadata including modalities
-      const discovered = models["poolside/laguna-m.1"] as Record<string, unknown>;
+      const discovered = models["laguna-m.1"] as Record<string, unknown>;
       assert.ok(discovered.modalities);
     } finally {
       if (originalEnv !== undefined) {
@@ -444,7 +415,7 @@ describe("Poolside OpenCode Plugin", () => {
         config.provider as Record<string, Record<string, unknown>>
       ).poolside;
       const models = poolside.models as Record<string, unknown>;
-      const model = models["poolside/laguna-m.1"] as Record<string, unknown>;
+      const model = models["laguna-m.1"] as Record<string, unknown>;
       assert.ok(model.modalities);
       const modalities = model.modalities as Record<string, unknown>;
       assert.deepEqual(modalities.input, ["text"]);
@@ -489,11 +460,11 @@ describe("Poolside OpenCode Plugin", () => {
         config.provider as Record<string, Record<string, unknown>>
       ).poolside;
       const models = poolside.models as Record<string, unknown>;
-      const model = models["poolside/laguna-s-2.1"] as Record<string, unknown>;
+      const model = models["laguna-s-2.1"] as Record<string, unknown>;
       const variants = model.variants as Record<string, unknown>;
       assert.ok(variants);
-      assert.ok(variants.none);
-      assert.ok(variants.xhigh);
+      assert.deepEqual(variants.none, { reasoning: { effort: "none" } });
+      assert.deepEqual(variants.xhigh, { reasoning: { effort: "xhigh" } });
       assert.ok(!variants.minimal);
       assert.ok(!variants.low);
       assert.ok(!variants.medium);

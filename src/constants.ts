@@ -62,18 +62,16 @@ export const MAX_ONLY_THINKING_LEVELS = {
 /**
  * Reasoning effort variants injected into OpenCode model config.
  *
- * Each entry maps an OpenCode reasoning-effort level to the
- * `reasoningEffort` value that OpenCode sends to the provider. The
- * `reasoning` field is an OpenRouter-style extension that Poolside
- * accepts on its OpenAI-compatible API.
+ * Each entry maps an OpenCode variant to the OpenRouter-style `reasoning`
+ * object accepted by Poolside's OpenAI-compatible API.
  */
 export const REASONING_VARIANTS = {
-  none: { reasoningEffort: "none" },
-  minimal: { reasoningEffort: "minimal" },
-  low: { reasoningEffort: "low" },
-  medium: { reasoningEffort: "medium" },
-  high: { reasoningEffort: "high" },
-  xhigh: { reasoningEffort: "xhigh" },
+  none: { reasoning: { effort: "none" } },
+  minimal: { reasoning: { effort: "minimal" } },
+  low: { reasoning: { effort: "low" } },
+  medium: { reasoning: { effort: "medium" } },
+  high: { reasoning: { effort: "high" } },
+  xhigh: { reasoning: { effort: "xhigh" } },
 } as const;
 
 /**
@@ -82,8 +80,8 @@ export const REASONING_VARIANTS = {
  * OpenCode variant picker doesn't offer unsupported levels.
  */
 export const MAX_ONLY_VARIANTS = {
-  none: { reasoningEffort: "none" },
-  xhigh: { reasoningEffort: "xhigh" },
+  none: { reasoning: { effort: "none" } },
+  xhigh: { reasoning: { effort: "xhigh" } },
 } as const;
 
 /**

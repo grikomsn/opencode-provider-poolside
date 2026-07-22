@@ -2,6 +2,7 @@ import {
   FALLBACK_MODELS,
   MAX_ONLY_VARIANTS,
   POOLSIDE_BASE_URL,
+  PROVIDER_ID,
   REASONING_VARIANTS,
 } from "./constants.ts";
 import type {
@@ -90,7 +91,7 @@ export function parseModelsResponse(
             fallback?.cost.cache_read ?? 0
           ),
           cache_write: nonNegativeNumber(
-            pricing?.input_cache_read,
+            pricing?.input_cache_write,
             fallback?.cost.cache_write ?? 0
           ),
         },
@@ -150,14 +151,21 @@ export async function fetchModels(
 /**
  * Convert an array of model configs into the OpenCode provider `models` map.
  *
- * The map key is the model ID (e.g. `poolside/laguna-m.1`).
+ * OpenCode addresses a model as `<provider>/<config key>` but sends the
+ * config entry's `id` to the upstream API. Poolside's upstream IDs already
+ * start with `poolside/`, so using the full ID as the key would expose the
+ * incorrect doubled name `poolside/poolside/laguna-m.1`.
  */
 export function modelsToConfigMap(
   models: OpenCodeModelConfig[]
 ): Record<string, OpenCodeModelConfig> {
   const map: Record<string, OpenCodeModelConfig> = {};
   for (const model of models) {
-    map[model.id] = model;
+    const prefix = `${PROVIDER_ID}/`;
+    const key = model.id.startsWith(prefix)
+      ? model.id.slice(prefix.length)
+      : model.id;
+    map[key] = model;
   }
   return map;
 }
