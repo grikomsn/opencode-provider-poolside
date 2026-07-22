@@ -11,7 +11,7 @@ import {
   fetchModels,
   modelsToConfigMap,
 } from "./src/models.ts";
-import type { OpenCodeModelConfig, OpenCodeProviderConfig } from "./src/types.ts";
+import type { OpenCodeProviderConfig } from "./src/types.ts";
 
 /**
  * OpenCode plugin that registers the Poolside AI model provider.

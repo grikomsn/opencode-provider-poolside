@@ -30,6 +30,7 @@
     "plugin.ts",
     "index.ts",
     "src/",
+    "assets/",
     "opencode.json",
     "README.md",
     "LICENSE"
