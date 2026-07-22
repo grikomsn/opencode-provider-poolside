@@ -60,8 +60,13 @@
       "optional": true
     }
   },
+  "publishConfig": {
+    "access": "public",
+    "provenance": true
+  },
   "devDependencies": {
     "@ai-sdk/openai-compatible": "^1.0.0",
+    "@changesets/cli": "^2.31.0",
     "@opencode-ai/plugin": "^1.18.4",
     "@types/node": "^24.0.0",
     "typescript": "^5.9.3"
