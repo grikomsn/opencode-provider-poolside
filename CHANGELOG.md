@@ -1,5 +1,11 @@
 # opencode-provider-poolside
 
+## 0.2.2
+
+### Patch Changes
+
+- bd40fae: Update Laguna model limits to the verified Poolside metadata and preserve those limits when live discovery reports stale values.
+
 ## 0.2.1
 
 ### Patch Changes
