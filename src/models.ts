@@ -95,15 +95,16 @@ export function parseModelsResponse(
             fallback?.cost.cache_write ?? 0
           ),
         },
+        // The verified Laguna catalog is authoritative for known models.
+        // Poolside's /models endpoint can expose stale limits for Laguna S
+        // 2.1, so live metadata must not shrink its advertised capacity.
         limit: {
-          context: positiveNumber(
-            item.context_length,
-            fallback?.limit.context ?? 262_144
-          ),
-          output: positiveNumber(
-            item.max_completion_tokens,
-            fallback?.limit.output ?? 32_768
-          ),
+          context:
+            fallback?.limit.context ??
+            positiveNumber(item.context_length, 262_144),
+          output:
+            fallback?.limit.output ??
+            positiveNumber(item.max_completion_tokens, 32_768),
         },
         variants,
         modalities: {

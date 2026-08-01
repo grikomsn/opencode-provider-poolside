@@ -192,6 +192,24 @@ describe("parseModelsResponse", () => {
     assert.equal(result[1]!.id, "poolside/laguna-xs-2.1");
     assert.equal(result[2]!.id, "poolside/laguna-s-2.1");
   });
+
+  test("preserves verified Laguna limits when the API reports stale values", () => {
+    const payload: PoolsideModelsResponse = {
+      data: [
+        {
+          id: "poolside/laguna-s-2.1",
+          context_length: 262_144,
+          max_completion_tokens: 32_768,
+        },
+      ],
+    };
+    const result = parseModelsResponse(payload);
+
+    assert.deepEqual(result[0]!.limit, {
+      context: 1_048_576,
+      output: 131_072,
+    });
+  });
 });
 
 describe("modelsToConfigMap", () => {
@@ -241,5 +259,16 @@ describe("FALLBACK_MODELS", () => {
       assert.ok(model.variants);
       assert.ok(Object.keys(model.variants).length > 0);
     }
+  });
+
+  test("uses the verified context and output limits", () => {
+    const limits = Object.fromEntries(
+      FALLBACK_MODELS.map((model) => [model.id, model.limit])
+    );
+    assert.deepEqual(limits, {
+      "poolside/laguna-m.1": { context: 262_144, output: 32_768 },
+      "poolside/laguna-xs-2.1": { context: 262_144, output: 32_768 },
+      "poolside/laguna-s-2.1": { context: 1_048_576, output: 131_072 },
+    });
   });
 });
