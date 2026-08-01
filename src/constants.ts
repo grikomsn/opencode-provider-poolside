@@ -93,10 +93,12 @@ export const MAX_ONLY_VARIANTS = {
 const ZERO_COST = { input: 0, output: 0, cache_read: 0, cache_write: 0 } as const;
 
 /**
- * Default context window and output token limits for Poolside models.
+ * Default context window and output token limits for Laguna M.1 and XS 2.1.
  */
 const DEFAULT_CONTEXT_WINDOW = 262_144;
 const DEFAULT_MAX_TOKENS = 32_768;
+const LAGUNA_S_CONTEXT_WINDOW = 1_048_576;
+const LAGUNA_S_MAX_TOKENS = 131_072;
 
 /**
  * Current Poolside Platform models, available before authenticated refresh.
@@ -130,7 +132,7 @@ export const FALLBACK_MODELS = [
     reasoning: true,
     tool_call: true,
     cost: ZERO_COST,
-    limit: { context: DEFAULT_CONTEXT_WINDOW, output: DEFAULT_MAX_TOKENS },
+    limit: { context: LAGUNA_S_CONTEXT_WINDOW, output: LAGUNA_S_MAX_TOKENS },
     variants: MAX_ONLY_VARIANTS,
   },
 ];
